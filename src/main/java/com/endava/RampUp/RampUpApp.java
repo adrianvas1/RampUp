@@ -7,6 +7,7 @@ import com.endava.config.ServiceConfiguration;
 import com.endava.resource.CRUDResource;
 import com.endava.springConfig.SpringConfig;
 import com.yammer.dropwizard.Service;
+import com.yammer.dropwizard.assets.AssetsBundle;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 
@@ -21,6 +22,8 @@ public class RampUpApp extends Service<ServiceConfiguration> {
     @Override
     public void initialize(Bootstrap<ServiceConfiguration> bootstrap) {
         bootstrap.setName("RampUp");
+        bootstrap.addBundle(new AssetsBundle("/assets", "/", "form.html"));
+;
     }
 
     @Override

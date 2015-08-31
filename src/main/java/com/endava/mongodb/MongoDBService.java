@@ -1,5 +1,11 @@
 package com.endava.mongodb;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,6 +24,7 @@ public class MongoDBService {
 	@SuppressWarnings("deprecation")
 	DB db = mongoClient.getDB("mydb");
 	DBCollection coll = db.getCollection("test1");
+	private OutputStream os;
 
 	// CREATE - POST
 	public void create(String name) {
@@ -34,23 +41,34 @@ public class MongoDBService {
 		BasicDBObject whereQuery = new BasicDBObject();
 		whereQuery.put("name", name);
 		DBCursor cursor = coll.find(whereQuery);
-		while(cursor.hasNext()) {
-		    return cursor.next().toString();
+		while (cursor.hasNext()) {
+			return cursor.next().toString();
 		}
 		return "no data found";
 	}
-	
+
 	// UPDATE - PATCH
 	public void update(String name) {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
-		coll.update(new BasicDBObject("name", name),
-                  new BasicDBObject("$set", new BasicDBObject("date", dateFormat.format(date))));
+		coll.update(new BasicDBObject("name", name), new BasicDBObject("$set",
+				new BasicDBObject("date", dateFormat.format(date))));
 	}
-	
+
 	// DELETE - DELETE
 	public void delete(String name) {
 		coll.remove(new BasicDBObject("name", name));
 	}
-	
+
+	// UPLOAD FILE
+	public void writeToFile(InputStream is, String uploadedFileLocation) throws IOException {
+		os = new FileOutputStream(new File(uploadedFileLocation));
+		byte[] buffer = new byte[1048];
+		int bytes = 0;
+		while ((bytes = is.read(buffer)) != -1) {
+			os.write(buffer, 0, bytes);
+			os.flush();
+            os.close();
+		}
+	}
 }
